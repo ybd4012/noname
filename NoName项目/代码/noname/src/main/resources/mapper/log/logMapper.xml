@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ybd.noname.dao.LogDAO">
+    <resultMap id="baseMap" type="com.ybd.noname.entities.LogEntities">
+        <id property="id" column="l_id"/>
+        <result property="content" column="l_content"/>
+        <result property="create_time" column="create_time"/>
+    </resultMap>
+    <insert id="addLog" parameterType="com.ybd.noname.entities.LogEntities">
+        INSERT INTO `log_log`(`l_content`)VALUES(#{content})
+    </insert>
+
+    <select id="getLogById" resultMap="baseMap">
+        SELECT * FROM `log_log` WHERE l_id = #{id}
+    </select>
+
+    <select id="getLogAll" resultMap="baseMap">
+         SELECT * FROM `log_log` ORDER BY `l_id` DESC
+    </select>
+</mapper>

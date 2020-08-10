@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org" lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="../../static/css/font.css" th:href="@{/css/font.css}">
+        <link rel="stylesheet" href="../../static/css/xadmin.css" th:href="@{/css/xadmin.css}">
+        <script src="../../static/lib/layui/layui.js" charset="utf-8" th:src="@{/lib/layui/layui.js}"></script>
+        <script type="text/javascript" src="../../static/js/xadmin.js" th:src="@{/js/xadmin.js}"></script>
+    </head>
+    
+<body>
+    <div th:fragment="main_order_list">
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                            <form class="layui-form layui-col-space5" th:action="@{/order/find}">
+                                <div class="layui-input-inline layui-show-xs-block">
+                                    <input type="text" name="oderNumber" placeholder="请输入订单号" autocomplete="off" class="layui-input">
+                                    <p th:text="${msg}" style="color: red"></p>
+                                </div>
+                                <div class="layui-input-inline layui-show-xs-block">
+                                    <button class="layui-btn" lay-submit="" lay-filter="sreach">
+                                        <i class="layui-icon">&#xe615;</i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-card-body ">
+                            <table class="layui-table layui-form">
+                                <thead>
+                                    <tr>
+                                        <th>所属用户id</th>
+                                        <th>订单编号</th>
+                                        <th>收货人</th>
+                                        <th>总金额</th>
+                                        <th>应付金额</th>
+                                        <th>支付状态</th>
+                                        <th>发货状态</th>
+                                        <th>支付方式</th>
+                                        <th>配送方式</th>
+                                        <th>下单时间</th>
+                                        <th>操作</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="order:${allOrder}">
+                                        <td th:text="${order.vipId}">2017009171822298053</td>
+                                        <td th:text="${order.oderNumber}">2017009171822298053</td>
+                                        <td th:text="${order.consignee}">老王:18925139194</td>
+                                        <td th:text="${order.amount}">7829.10</td>
+                                        <td th:text="${order.amountPayable}">7854.10</td>
+                                        <td th:text="${order.orderStatus}">未支付</td>
+                                        <td th:text="${order.deliveryStatus}">未发货</td>
+                                        <td th:text="${order.paymentMethod}">其他方式</td>
+                                        <td th:text="${order.distributionMode}">申通物流</td>
+                                        <td th:text="${order.orderCreatTime}">2017-08-17 18:22</td>
+                                        <td class="td-manage">
+                                            <a title="删除"th:href="@{/order/deleteOneById/}+${order.oderNumber}" href="javascript:;">
+                                                <i class="layui-icon">&#xe640;</i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="layui-card-body ">
+                            <div class="page">
+                                <div>
+                                    <!--                                    减去2 是因为请求中有 +1  -->
+                                    <a class="prev" href="" th:if="${currentPages}!='1'" th:href="@{/order/list/}+${currentPages-2}">&lt;&lt;</a>
+                                    <span class="current" th:text="${currentPages}">2</span>
+                                    <a class="next"th:if="${nextPage}=='true'" th:href="@{/order/list/}+${currentPages}">&gt;&gt;</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>layui.use(['laydate', 'form'],
+            function() {
+                var laydate = layui.laydate;
+
+                //执行一个laydate实例
+                laydate.render({
+                    elem: '#start' //指定元素
+                });
+
+                //执行一个laydate实例
+                laydate.render({
+                    elem: '#end' //指定元素
+                });
+            });
+
+        /*用户-停用*/
+        function member_stop(obj, id) {
+            layer.confirm('确认要停用吗？',
+                function(index) {
+
+                    if ($(obj).attr('title') == '启用') {
+
+                        //发异步把用户状态进行更改
+                        $(obj).attr('title', '停用');
+                        $(obj).find('i').html('&#xe62f;');
+
+                        $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
+                        layer.msg('已停用!', {
+                            icon: 5,
+                            time: 1000
+                        });
+                    } else {
+                        $(obj).attr('title', '启用');
+                        $(obj).find('i').html('&#xe601;');
+
+                        $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
+                        layer.msg('已启用!', {
+                            icon: 5,
+                            time: 1000
+                        });
+                    }
+                });
+        }
+</script>
+    </div>
+    </body>
+</html>

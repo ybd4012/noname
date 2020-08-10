@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ybd.noname.dao.AdminDAO">
+    <resultMap id="adminBaseMap" type="com.ybd.noname.entities.AdminEntities">
+        <id property="id" column="ad_id"/>
+        <result property="username" column="ad_username" />
+        <result property="password" column="ad_password" />
+        <result property="roleId" column="ad_role_id" />
+        <result property="status" column="ad_status" />
+        <result property="createTime" column="ad_creat_time" />
+        <result property="updateTime" column="ad_update_time" />
+        <result property="phone" column="ad_phone" />
+        <result property="email" column="ad_email" />
+<!--        一对一的封装 -->
+        <result property="roleEntities.name" column="role_name"/>
+        <result property="roleEntities.id" column="role_id"/>
+        <result property="roleEntities.power" column="role_power"/>
+        <result property="roleEntities.describe" column="role_describe"/>
+        <result property="roleEntities.status" column="role_status"/>
+        <result property="roleEntities.perms" column="rule_perms"/>
+    </resultMap>
+    <insert id="addAdminByDynamic" parameterType="com.ybd.noname.entities.AdminEntities">
+        INSERT INTO `noname`.`admin_admin`
+        (`ad_username`
+        <if test="password !=null">,`ad_password`</if>
+        <if test="roleId !=null">,`ad_role_id`</if>
+        <if test="email !=null">,`ad_email`</if>
+        <if test="phone !=null">,`ad_phone`</if>
+        )VALUES
+        (#{username}
+        <if test="password !=null">,#{password}</if>
+        <if test="roleId !=null">,#{roleId}</if>
+        <if test="email !=null">,#{email}</if>
+        <if test="phone !=null">,#{phone}</if>
+        )
+    </insert>
+
+    <update id="editAdmin" parameterType="com.ybd.noname.entities.AdminEntities">
+       UPDATE`noname`.`admin_admin`SET`ad_password` = #{password},`ad_role_id` = #{roleId},`ad_phone` = #{phone},`ad_email` = #{email} WHERE `ad_id` = #{id};
+    </update>
+    <update id="editStatusById" parameterType="integer">
+        UPDATE`noname`.`admin_admin`
+        <set>
+            <if test="status == 0">`ad_status`=1,</if>
+            <if test="status == 1">`ad_status`=0,</if>
+        </set>
+        where `ad_id` = #{id}
+    </update>
+    <delete id="deleteById" parameterType="integer">
+        DELETE FROM`noname`.`admin_admin` WHERE `ad_id` = #{id};
+    </delete>
+    <select id="getAllAdmin" resultMap="adminBaseMap">
+        SELECT a.*,b.* FROM `admin_admin` a INNER JOIN `admin_role` b ON  a.`ad_role_id`=b.`role_id`;
+    </select>
+
+    <select id="getAdminByName" resultMap="adminBaseMap" parameterType="com.ybd.noname.entities.AdminEntities">
+        SELECT a.*,b.* FROM `admin_admin` a INNER JOIN `admin_role` b ON  a.`ad_role_id`=b.`role_id`where`ad_username`=#{username}
+    </select>
+
+    <select id="getAdminByDynamic" resultMap="adminBaseMap" parameterType="com.ybd.noname.entities.AdminEntities">
+        SELECT a.*,b.* FROM `admin_admin` a INNER JOIN `admin_role` b ON  a.`ad_role_id`=b.`role_id`
+        <where>
+            <if test="username != null">
+                `ad_username`=#{username}
+            </if>
+            <if test="email != null">
+                and `ad_email`=#{email}
+            </if>
+            <if test="phone != null">
+                and `ad_phone`=#{phone}
+            </if>
+        </where>
+    </select>
+    <select id="getAllVipByLimit" resultMap="adminBaseMap" parameterType="integer">
+        SELECT a.*,b.* FROM `admin_admin` a INNER JOIN `admin_role` b ON  a.`ad_role_id`=b.`role_id` limit #{startPage},#{pageSize}
+    </select>
+</mapper>

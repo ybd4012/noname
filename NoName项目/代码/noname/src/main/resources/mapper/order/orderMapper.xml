@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ybd.noname.dao.OrderDAO">
+    <resultMap id="orderBaseMap" type="com.ybd.noname.entities.OrderEntities">
+        <id property="id" column="o_id"/>
+        <result property="oderNumber" column="o_oder_number"/>
+        <result property="consignee" column="o_consignee"/>
+        <result property="amount" column="o_amount"/>
+        <result property="amountPayable" column="o_amount_payable"/>
+        <result property="orderStatus" column="o_order_status"/>
+        <result property="deliveryStatus" column="o_delivery_status"/>
+        <result property="paymentMethod" column="o_payment_method"/>
+        <result property="distributionMode" column="o_distribution_mode"/>
+        <result property="orderCreatTime" column="o_order_creat_time"/>
+        <result property="vipId" column="o_vip_id"/>
+    </resultMap>
+
+    <resultMap id="orderBaseMapJoint" type="com.ybd.noname.entities.OrderEntities">
+        <id property="id" column="o_id"/>
+        <result property="oderNumber" column="o_oder_number"/>
+        <result property="consignee" column="o_consignee"/>
+        <result property="amount" column="o_amount"/>
+        <result property="amountPayable" column="o_amount_payable"/>
+        <result property="orderStatus" column="o_order_status"/>
+        <result property="deliveryStatus" column="o_delivery_status"/>
+        <result property="paymentMethod" column="o_payment_method"/>
+        <result property="distributionMode" column="o_distribution_mode"/>
+        <result property="orderCreatTime" column="o_order_creat_time"/>
+        <result property="vipId" column="o_vip_id"/>
+
+        <association property="vipEntities" javaType="com.ybd.noname.entities.VipEntities" select="com.ybd.noname.dao.VipDAO.getOneById" column="o_vip_id" fetchType="eager">
+            <id property="id" column="v_id"/>
+            <result property="username" column="v_username"/>
+            <result property="password" column="v_password"/>
+            <result property="gender" column="v_gender"/>
+            <result property="phone" column="v_phone"/>
+            <result property="email" column="v_email"/>
+            <result property="creat_time" column="v_creat_time"/>
+            <result property="update_time" column="v_update_time"/>
+            <result property="status" column="v_status"/>
+            <result property="name" column="v_name"/>
+        </association>
+    </resultMap>
+    <insert id="addOrder" parameterType="com.ybd.noname.entities.OrderEntities">
+        INSERT INTO `noname`.`order_orders`
+        (`o_oder_number`,`o_consignee`,`o_amount`,`o_amount_payable`,`o_order_status`,`o_delivery_status`,`o_payment_method`, `o_distribution_mode`,`o_vip_id`)
+        VALUES
+        (#{oderNumber},#{consignee},#{amount},#{amountPayable},#{orderStatus},#{deliveryStatus},#{paymentMethod},#{distributionMode},#{vipId});
+    </insert>
+    <delete id="deleteOneByOderNumber" parameterType="string">
+        DELETE FROM`noname`.`order_orders` WHERE `o_oder_number` = #{oderNumber};
+    </delete>
+
+    <select id="getOneByIdJoint" resultMap="orderBaseMapJoint" >
+        SELECT * FROM `order_orders` WHERE `o_id`=#{id}
+    </select>
+    <select id="getOneByVid" resultMap="orderBaseMap">
+        SELECT * FROM `order_orders` WHERE `o_vip_id`=#{id}
+    </select>
+
+    <select id="getAllOrder" resultMap="orderBaseMapJoint">
+        SELECT * FROM `order_orders`
+    </select>
+    <select id="getOneByoderNumber" resultMap="orderBaseMap">
+        SELECT * FROM `order_orders` WHERE `o_oder_number`=#{oderNumber}
+    </select>
+    <select id="getAllVipByLimit" resultMap="orderBaseMapJoint" parameterType="integer">
+        SELECT * FROM `order_orders` limit #{startPage},#{pageSize}
+    </select>
+
+</mapper>

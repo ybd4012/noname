@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ybd.noname.dao.VipDAO">
+    <resultMap id="vipBaseMap" type="com.ybd.noname.entities.VipEntities">
+
+        <id property="id" column="v_id"/>
+        <result property="username" column="v_username"/>
+        <result property="password" column="v_password"/>
+        <result property="gender" column="v_gender"/>
+        <result property="phone" column="v_phone"/>
+        <result property="email" column="v_email"/>
+        <result property="creat_time" column="v_creat_time"/>
+        <result property="update_time" column="v_update_time"/>
+        <result property="status" column="v_status"/>
+        <result property="name" column="v_name"/>
+
+        <collection property="orderEntities" ofType="com.ybd.noname.entities.OrderEntities" select="com.ybd.noname.dao.OrderDAO.getOneByVid" column="v_id" fetchType="lazy">
+            <id property="id" column="o_id"/>
+            <result property="oderNumber" column="o_oder_number"/>
+            <result property="consignee" column="o_consignee"/>
+            <result property="amount" column="o_amount"/>
+            <result property="amountPayable" column="o_amount_payable"/>
+            <result property="orderStatus" column="o_order_status"/>
+            <result property="deliveryStatus" column="o_delivery_status"/>
+            <result property="paymentMethod" column="o_payment_method"/>
+            <result property="distributionMode" column="o_distribution_mode"/>
+            <result property="orderCreatTime" column="o_order_creat_time"/>
+            <result property="vipId" column="o_vip_id"/>
+        </collection>
+    </resultMap>
+    <insert id="addByDynamic" parameterType="com.ybd.noname.entities.VipEntities">
+        INSERT INTO `noname`.`vip_vips` (
+          `v_username`
+        <if test="password != null">,`v_password`</if>
+        <if test="gender != null">,`v_gender`</if>
+        <if test="phone != null">,`v_phone`</if>
+        <if test="email != null">,`v_email`</if>
+        <if test="name != null">,`v_name`</if>
+        )VALUES(
+        #{username}
+        <if test="password != null">,#{password}</if>
+        <if test="gender != null">,#{gender}</if>
+        <if test="phone != null">,#{phone}</if>
+        <if test="email != null">,#{email}</if>
+        <if test="name != null">,#{name}</if>
+          ) ;
+    </insert>
+    <update id="editStatusById" parameterType="integer">
+        UPDATE`noname`.`vip_vips`
+        <set>
+            <if test="status == 0">`v_status`=1,</if>
+            <if test="status == 1">`v_status`=0,</if>
+        </set>
+        where `v_id` = #{id}
+    </update>
+
+    <update id="editVipByDynamic" parameterType="com.ybd.noname.entities.VipEntities">
+        UPDATE
+          `noname`.`vip_vips`
+        <set>
+            <if test="password != null">`v_password` =#{password},</if>
+            <if test="gender != null">`v_gender`=#{gender},</if>
+            <if test="phone != null">`v_phone`=#{phone},</if>
+            <if test="email != null">`v_email`=#{email},</if>
+            <if test="name != null">`v_name`=#{name},</if>
+        </set>
+        WHERE`v_id` = #{id};
+    </update>
+
+    <select id="getAllVip" resultMap="vipBaseMap">
+        SELECT * FROM `vip_vips`
+    </select>
+
+    <select id="getOneById" resultMap="vipBaseMap">
+        SELECT * FROM `vip_vips` WHERE `v_id`=#{id}
+    </select>
+    <select id="getOneByName" resultMap="vipBaseMap">
+        SELECT * FROM `vip_vips` WHERE `v_username`=#{username}
+    </select>
+    <select id="getAllVipByLimit" resultMap="vipBaseMap" parameterType="integer">
+        SELECT * FROM `vip_vips` limit #{startPage},#{pageSize}
+    </select>
+</mapper>

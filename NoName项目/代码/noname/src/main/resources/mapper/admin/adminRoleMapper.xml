@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ybd.noname.dao.RoleDAO">
+    <resultMap id="roleBaseMap" type="com.ybd.noname.entities.RoleEntities">
+        <id property="id" column="role_id"/>
+        <result property="name" column="role_name"/>
+        <result property="power" column="role_power"/>
+        <result property="describe" column="role_describe"/>
+        <result property="status" column="role_status"/>
+        <result property="perms" column="rule_perms"/>
+    </resultMap>
+    <select id="getAllRole" resultMap="roleBaseMap">
+        select * from `admin_role`
+    </select>
+</mapper>
